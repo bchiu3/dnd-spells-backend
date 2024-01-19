@@ -1,0 +1,7 @@
+.env
+*.pem
+.vscode
+dndSpellsBackend/media
+dndSpellsBackend/spells/migrations
+venv
+**/__pycache__/
