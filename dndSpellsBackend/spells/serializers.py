@@ -54,6 +54,7 @@ class SpellSerializer(MongoSerializer):
     components = serializers.ListField(child = serializers.CharField(read_only=True), read_only=True)
     component_material = serializers.CharField(read_only=True)
     classes = serializers.ListField(child = serializers.CharField(read_only=True), read_only=True)
+    is_recommended = serializers.BooleanField()
     image_url = serializers.URLField()
     url = serializers.URLField(read_only=True)
     
@@ -61,7 +62,7 @@ class SpellSerializer(MongoSerializer):
         super().__init__(*args, **kwargs)
         try:
             if self.context['request'].method in ['POST', 'PUT', 'PATCH']:
-                self.fields['image_url'] = serializers.FileField()
+                self.fields['image_url'] = serializers.FileField(required=False)
         except KeyError:
             pass
 
@@ -78,7 +79,7 @@ class SpellClassSerializer(MongoSerializer):
 
         try:
             if self.context['request'].method in ['POST', 'PUT', 'PATCH']:
-                self.fields['image_url'] = serializers.FileField()
+                self.fields['image_url'] = serializers.FileField(required=False)
         except KeyError:
             pass
     

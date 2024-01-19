@@ -1,7 +1,9 @@
 .env
 *.pem
 .vscode
-dndSpellsBackend/media
+dndSpellsBackend/media/*.jpg
+dndSpellsBackend/media/*.png
 dndSpellsBackend/spells/migrations
 venv
+othervenv
 **/__pycache__/

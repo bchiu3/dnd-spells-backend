@@ -35,10 +35,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG') == "True"
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','.vercel.app', '.now.sh']
-
+if DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+else:
+    ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
 
 # Application definition
 
@@ -50,12 +52,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'spells.apps.SpellsConfig',
+    'corsheaders',
     'rest_framework',
     'storages',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,9 +95,14 @@ WSGI_APPLICATION = 'dndSpellsBackend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.dummy',
-        },
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        'NAME': os.environ.get("POSTGRES_DATABASE"),
+        'USER': os.environ.get("POSTGRES_USER"),
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
+        'HOST': os.environ.get("POSTGRES_HOST"),
+        'PORT': os.environ.get("POSTGRES_PORT"),
+    }
 }
 
 
@@ -153,18 +164,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     },
 # }
 
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
-
 # STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 # STATIC_URL = "https://1.bp.blogspot.com/-Yx8sfH4iJ-E/T0NFB_DEhrI/AAAAAAAAskY/iaHoqbb-2Xk/s1600/"
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [BASE_DIR/'static',]
+# STATIC_ROOT = os.path.join(
+#     BASE_DIR, 'staticfiles', 'static')
+STATIC_ROOT = BASE_DIR.parent / "staticfiles" / "static"
 
 MEDIA_URL = '/media/'
 
@@ -174,6 +179,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
 }
+
+WSGI_APPLICATION = 'dndSpellsBackend.wsgi.app'
+
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = os.getenv("FRONTEND_URLS").split(",")
+
 
 mongoengine.connect(db= MONGO_DB_NAME, 
                     host= MONGO_HOST_URL, 
