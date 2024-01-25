@@ -3,10 +3,8 @@ from os import read
 from bson import ObjectId
 from bson.errors import InvalidId
 from rest_framework import serializers
-
-from .utils import validate_comma_separated_list
-
-from .models import CastType, ClassType, ComponentType, SpellClasses, SpellRangeType, SpellSchool, Spells
+from .utils import validate_comma_separated_list, CastType, ClassType, ComponentType, SpellRangeType, SpellSchool
+from .models import Spells, SpellClasses
 from django.conf import settings
 
 class MongoSerializer(serializers.Serializer):
@@ -40,7 +38,6 @@ class ObjectIdField(serializers.Field):
 
 # can't use __all__ because of django_mongoengine_filter
 class SpellSerializer(MongoSerializer):
-    _id = ObjectIdField(read_only=True, required=False)
     name = serializers.CharField()
     description = serializers.CharField()
     level = serializers.IntegerField()
@@ -85,6 +82,7 @@ class SpellSerializer(MongoSerializer):
             except:
                 raise serializers.ValidationError("Invalid class type")
         return data
+
 
     class Meta:
         model = Spells

@@ -4,69 +4,10 @@ from enum import Enum
 from django.conf import settings
 from django.forms import ChoiceField
 from mongoengine import *
-from django.core.files.uploadedfile import UploadedFile
-
-class CastType(Enum):
-    Action = "Action"
-    Bonus = "Bonus"
-    Reaction = "Reaction"
-    Time = "Time"
-    Unknown = "Unknown"
-    
-    def __str__(self):
-        return self.value
-
-class SpellRangeType(Enum):
-    Self = "Self"
-    Touch = "Touch"
-    Sight = "Sight"
-    Special = "Special"
-    Unlimited = "Unlimited"
-    Units = "Units"
-    Unknown = "Unknown"
-    
-    def __str__(self):
-        return self.value
-
-class SpellSchool(Enum):
-    Abjuration = "abjuration"
-    Conjuration = "conjuration"
-    Divination = "divination"
-    Enchantment = "enchantment"
-    Evocation = "evocation"
-    Illusion = "illusion"
-    Necromancy = "necromancy"
-    Transmutation = "transmutation"
-    Unknown = "unknown"
-    
-    def __str__(self):
-        return self.value
-
-class ComponentType(Enum):
-    Verbal = "Verbal"
-    Somatic = "Somatic"
-    Material = "Material"
-    
-    def __str__(self):
-        return self.value
-
-
-class ClassType(Enum):
-    Artificer = "artificer"
-    Bard = "bard"
-    Cleric = "cleric"
-    Druid = "druid"
-    Paladin = "paladin"
-    Ranger = "ranger"
-    Sorcerer = "sorcerer"
-    Warlock = "warlock"
-    Wizard = "wizard"
-    
-    def __str__(self):
-        return self.value
+from .utils import SpellSchool, CastType, SpellRangeType, ComponentType, ClassType, save_image
 
 class Spells(Document):
-    _id = ObjectIdField()
+    # _id = ObjectIdField()
     name = StringField()
     description = StringField()
     level = IntField()
@@ -91,7 +32,8 @@ class Spells(Document):
         'indexes': [
             'classes',
             'level',
-        ]
+        ],
+        # 'id_field': '_id'
     }
     
     def save(self, *args, **kwargs):
@@ -113,19 +55,6 @@ class SpellClasses(Document):
     class Meta:
         db_table = "spell_classes"
 
-
-def save_image(image):
-    if type(image) == str:
-        return image
-    if hasattr(image, 'url'):
-        return image.url
-    if isinstance(image, UploadedFile):
-        with open(settings.MEDIA_ROOT / image.name, 'wb+') as f:
-            for chunk in image.chunks():
-                f.write(chunk)
-            return "http://localhost:8000" + settings.MEDIA_URL + image.name
-    else:
-        return None
     
                 
     

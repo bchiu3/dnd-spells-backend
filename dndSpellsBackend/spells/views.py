@@ -10,6 +10,8 @@ import django_mongoengine_filter as filters
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework import status
 
 # Create your views here.
 
@@ -62,10 +64,17 @@ class SpellsView(generics.ListCreateAPIView):
     serializer_class = SpellSerializer
     pagination_class = StandardResultsSetPagination
     def filter_queryset(self, queryset):
-        print(list(CastType))
         filter_qs = SpellFilter(self.request.query_params, queryset=queryset) # type: ignore
         return filter_qs.qs.order_by('level', '-is_recommended', 'name')
 
+class SpellsInstanceView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Spells.objects.all() # type: ignore
+    serializer_class = SpellSerializer
+    parser_classes = (MultiPartParser, FileUploadParser)
+    lookup_field = 'name'
+    
 class SpellClassesView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -81,12 +90,5 @@ class SpellClassesInstanceView(generics.RetrieveUpdateDestroyAPIView):
     parser_classes = (MultiPartParser, FileUploadParser)
     lookup_field = 'name'
     
-
-class SpellsInstanceView(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Spells.objects.all() # type: ignore
-    serializer_class = SpellSerializer
-    parser_classes = (MultiPartParser, FileUploadParser)
-    lookup_field = 'name'
+        
     
