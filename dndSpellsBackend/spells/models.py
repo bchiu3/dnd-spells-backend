@@ -29,15 +29,15 @@ class SpellRangeType(Enum):
         return self.value
 
 class SpellSchool(Enum):
-    abjuration = "abjuration"
-    conjuration = "conjuration"
-    divination = "divination"
-    enchantment = "enchantment"
-    evocation = "evocation"
-    illusion = "illusion"
-    necromancy = "necromancy"
-    transmutation = "transmutation"
-    unknown = "unknown"
+    Abjuration = "abjuration"
+    Conjuration = "conjuration"
+    Divination = "divination"
+    Enchantment = "enchantment"
+    Evocation = "evocation"
+    Illusion = "illusion"
+    Necromancy = "necromancy"
+    Transmutation = "transmutation"
+    Unknown = "unknown"
     
     def __str__(self):
         return self.value
@@ -70,7 +70,7 @@ class Spells(Document):
     name = StringField()
     description = StringField()
     level = IntField()
-    school = EnumField(SpellSchool, default=SpellSchool.unknown)
+    school = EnumField(SpellSchool, default=SpellSchool.Unknown)
     duration = StringField()
     is_concentration = BooleanField()
     cast_type = EnumField(CastType, default=CastType.Unknown)
@@ -83,9 +83,9 @@ class Spells(Document):
     components = ListField(EnumField(ComponentType))
     component_material = StringField()
     classes = ListField(EnumField(ClassType))
-    image_url = URLField()
+    image_url = URLField(required=False, null=True)
     is_recommended = BooleanField(default=False)
-    url = URLField()
+    url = URLField(required=False, null=True)
     
     meta = {
         'indexes': [

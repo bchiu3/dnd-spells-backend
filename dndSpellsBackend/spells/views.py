@@ -55,13 +55,14 @@ class SpellFilter(filters.FilterSet):
         values = value.title().split(",")
         return queryset(cast_type__in=values)
 
-class SpellsView(generics.ListAPIView):
+class SpellsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Spells.objects.all() # type: ignore
     serializer_class = SpellSerializer
     pagination_class = StandardResultsSetPagination
     def filter_queryset(self, queryset):
+        print(list(CastType))
         filter_qs = SpellFilter(self.request.query_params, queryset=queryset) # type: ignore
         return filter_qs.qs.order_by('level', '-is_recommended', 'name')
 

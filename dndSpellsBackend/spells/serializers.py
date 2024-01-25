@@ -1,9 +1,12 @@
+from email.policy import default
 from os import read
 from bson import ObjectId
 from bson.errors import InvalidId
 from rest_framework import serializers
 
-from .models import SpellClasses, Spells
+from .utils import validate_comma_separated_list
+
+from .models import CastType, ClassType, ComponentType, SpellClasses, SpellRangeType, SpellSchool, Spells
 from django.conf import settings
 
 class MongoSerializer(serializers.Serializer):
@@ -37,34 +40,51 @@ class ObjectIdField(serializers.Field):
 
 # can't use __all__ because of django_mongoengine_filter
 class SpellSerializer(MongoSerializer):
-    _id = ObjectIdField(read_only=True)
-    name = serializers.CharField(read_only=True)
-    description = serializers.CharField(read_only=True)
-    level = serializers.IntegerField(read_only=True)
-    school = serializers.CharField(read_only=True)
-    duration = serializers.CharField(read_only=True)
-    is_concentration = serializers.BooleanField(read_only=True)
-    cast_type = serializers.CharField(read_only=True)
-    cast_time = serializers.IntegerField(read_only=True)
-    is_ritual = serializers.BooleanField(read_only=True)
-    range_type = serializers.CharField(read_only=True)
-    spell_range = serializers.CharField(read_only=True)
-    has_upcast = serializers.BooleanField(read_only=True)
-    upcast = serializers.CharField(read_only=True)
-    components = serializers.ListField(child = serializers.CharField(read_only=True), read_only=True)
-    component_material = serializers.CharField(read_only=True)
-    classes = serializers.ListField(child = serializers.CharField(read_only=True), read_only=True)
+    _id = ObjectIdField(read_only=True, required=False)
+    name = serializers.CharField()
+    description = serializers.CharField()
+    level = serializers.IntegerField()
+    school = serializers.ChoiceField(choices=[(member.value, member.name) for member in SpellSchool])
+    duration = serializers.CharField()
+    is_concentration = serializers.BooleanField()
+    cast_type = serializers.ChoiceField(choices=[(member.value, member.name) for member in CastType])
+    cast_time = serializers.IntegerField(default=0)
+    is_ritual = serializers.BooleanField()
+    range_type = serializers.ChoiceField(choices=[(member.value, member.name) for member in SpellRangeType])
+    spell_range = serializers.CharField()
+    has_upcast = serializers.BooleanField()
+    upcast = serializers.CharField(default="")
+    components = serializers.ListField(child=serializers.ChoiceField(choices=[(member.value, member.name) for member in ComponentType]))
+    component_material = serializers.CharField(default="")
+    classes = serializers.ListField(child=serializers.ChoiceField(choices=[(member.value, member.name) for member in ClassType]))
     is_recommended = serializers.BooleanField()
     image_url = serializers.URLField()
-    url = serializers.URLField(read_only=True)
+    url = serializers.URLField(required=False)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
             if self.context['request'].method in ['POST', 'PUT', 'PATCH']:
                 self.fields['image_url'] = serializers.FileField(required=False)
+                self.fields['components'] = serializers.CharField(default="")
+                self.fields['classes'] = serializers.CharField(default="")
         except KeyError:
             pass
+    
+    def validate(self, data):
+        if data['level'] < 0:
+            raise serializers.ValidationError("Level must be greater than 0")
+        if data['components']:
+            try:
+                data['components'] = validate_comma_separated_list(data['components'], ComponentType, lambda x: x.strip().title())
+            except:
+                raise serializers.ValidationError("Invalid component type")
+        if data['classes']:
+            try:
+                data['classes'] = validate_comma_separated_list(data['classes'], ClassType, lambda x: x.strip().lower())
+            except:
+                raise serializers.ValidationError("Invalid class type")
+        return data
 
     class Meta:
         model = Spells
