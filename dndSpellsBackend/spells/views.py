@@ -28,7 +28,7 @@ class SpellFilter(filters.FilterSet):
     components = filters.StringFilter(lookup_type='icontains')
     spell_range = filters.StringFilter(lookup_type='icontains')
     school = filters.MethodFilter(lookup_type='filter_school')
-    range_type = filters.StringFilter(lookup_type='iexact')
+    range_type = filters.MethodFilter(action='filter_range_type')
     level = filters.MethodFilter(action='filter_level')
     components = filters.MethodFilter(action='filter_components')
     cast_type = filters.MethodFilter(action='filter_cast_type')
@@ -44,6 +44,10 @@ class SpellFilter(filters.FilterSet):
     def filter_school(self, queryset, name, value):
         values = value.split(",")
         return queryset(school__in=values)
+    
+    def filter_range_type(self, queryset, name, value):
+        values = value.split(",")
+        return queryset(range_type__in=values)
     
     def filter_classes(self, queryset, name, value):
         values = value.lower().split(",")
