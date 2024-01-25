@@ -9,4 +9,4 @@ class StringConverter:
         return urllib_parse.unquote(urllib_parse.unquote(value))
     
     def to_url(self, value):
-        return urllib_parse.quote(value)
+        return urllib_parse.unquote(value)
