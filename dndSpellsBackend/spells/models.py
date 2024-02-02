@@ -24,7 +24,7 @@ class Spells(Document):
     components = ListField(EnumField(ComponentType))
     component_material = StringField()
     classes = ListField(EnumField(ClassType))
-    image_url = URLField(required=False, null=True)
+    image_url = StringField(required=False)
     is_recommended = BooleanField(default=False)
     url = URLField(required=False, null=True)
     

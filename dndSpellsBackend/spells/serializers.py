@@ -3,6 +3,8 @@ from os import read
 from bson import ObjectId
 from bson.errors import InvalidId
 from rest_framework import serializers
+
+from dndSpellsBackend.storage_backends import PublicMediaStorage
 from .utils import validate_comma_separated_list, CastType, ClassType, ComponentType, SpellRangeType, SpellSchool
 from .models import Spells, SpellClasses
 from django.conf import settings
@@ -55,7 +57,7 @@ class SpellSerializer(MongoSerializer):
     component_material = serializers.CharField(default="")
     classes = serializers.ListField(child=serializers.ChoiceField(choices=[(member.value, member.name) for member in ClassType]))
     is_recommended = serializers.BooleanField()
-    image_url = serializers.URLField()
+    image_url = serializers.SerializerMethodField()
     url = serializers.URLField(required=False)
     
     def __init__(self, *args, **kwargs):
@@ -67,6 +69,11 @@ class SpellSerializer(MongoSerializer):
                 self.fields['classes'] = serializers.CharField(default="")
         except KeyError:
             pass
+    
+    def get_image_url(self, obj):
+        if obj.image_url:
+            return PublicMediaStorage().url(obj.image_url)
+        return None
     
     def validate(self, data):
         if data['level'] < 0:

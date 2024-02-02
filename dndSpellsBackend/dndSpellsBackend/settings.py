@@ -22,7 +22,6 @@ MONGO_HOST_URL = os.getenv('MONGO_HOST_URL')
 MONGO_DB_NAME = os.getenv('MONGO_DB_NAME')
 MONGO_USERNAME = os.getenv('MONGO_USERNAME')
 MONGO_PASSWORD = os.getenv('MONGO_PASSWORD')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,10 +50,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'spells.apps.SpellsConfig',
     'corsheaders',
     'rest_framework',
     'storages',
+    'spells.apps.SpellsConfig',
 ]
 
 MIDDLEWARE = [
@@ -147,33 +146,25 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# STORAGES = {
-#     "default": {
-#         "BACKEND": "storages.backends.s3.S3Storage",
-#         "OPTIONS": {
-#             "access_key": os.getenv('AWS_S3_ACCESS_KEY_ID'),
-#             "secret_key": os.getenv('AWS_S3_SECRET_ACCESS_KEY'),
-#             "bucket_name": AWS_STORAGE_BUCKET_NAME,
-#             "region_name": os.getenv('AWS_S3_REGION_NAME'),
-#             "default_acl": "public-read",
-#             "object_parameters": {'CacheControl': 'max-age=86400'}
-#         },
-#     },
-#     "staticfiles": {
-#         "BACKEND": 'storages.backends.s3boto3.S3Boto3Storage',
-#     },
-# }
-
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
+AWS_S3_ACCESS_KEY_ID = os.getenv('AWS_S3_ACCESS_KEY_ID')
+AWS_S3_SECRET_ACCESS_KEY = os.getenv('AWS_S3_SECRET_ACCESS_KEY')
+# AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+    
 # STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 # STATIC_URL = "https://1.bp.blogspot.com/-Yx8sfH4iJ-E/T0NFB_DEhrI/AAAAAAAAskY/iaHoqbb-2Xk/s1600/"
-# STATICFILES_DIRS = [BASE_DIR/'static',]
 # STATIC_ROOT = os.path.join(
 #     BASE_DIR, 'staticfiles', 'static')
+
+# STATICFILES_DIRS = [BASE_DIR/'static',]
 STATIC_ROOT = BASE_DIR.parent / "staticfiles" / "static"
 
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -185,7 +176,9 @@ WSGI_APPLICATION = 'dndSpellsBackend.wsgi.app'
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOWED_ORIGINS = os.getenv("FRONTEND_URLS").split(",")
+    frontend_urls = os.getenv("FRONTEND_URLS")
+    if frontend_urls:
+        CORS_ALLOWED_ORIGINS = frontend_urls.split(",")
 
 
 mongoengine.connect(db= MONGO_DB_NAME, 

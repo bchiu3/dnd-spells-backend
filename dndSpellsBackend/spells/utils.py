@@ -1,7 +1,11 @@
 from enum import Enum
+import random
 from typing import Callable
+import uuid
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
+
+from dndSpellsBackend.storage_backends import PublicMediaStorage
 
 class EnumPrint(Enum):
     def __repr__(self):
@@ -67,9 +71,12 @@ def save_image(image):
     if hasattr(image, 'url'):
         return image.url
     if isinstance(image, UploadedFile):
-        with open(settings.MEDIA_ROOT / image.name, 'wb+') as f:
-            for chunk in image.chunks():
-                f.write(chunk)
-            return "http://localhost:8000" + settings.MEDIA_URL + image.name
+        image.name = f"{get_random_hash()}"
+        upload = PublicMediaStorage()
+        file_name = upload.save(image.name, image)
+        return file_name
     else:
         return None
+
+def get_random_hash():
+    return uuid.uuid4().hex
