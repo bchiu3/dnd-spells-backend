@@ -1,6 +1,6 @@
 from enum import Enum
 import random
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 import uuid
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
@@ -78,7 +78,7 @@ def validate_comma_separated_list(value: str, field_type: type, sanitizer: Calla
         return_list[i] = (field_type(sanitizer(v)))
     return return_list
 
-def save_image(image: Any) -> str|None:
+def save_image(image: Any) -> Optional[str]:
     """
     Save the given image based on its type and return the appropriate image URL or file name.
 
