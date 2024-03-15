@@ -21,8 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('dnd/', include('spells.urls')),
+    path('api-auth/', include('rest_framework.urls')),  #URL for authentication
+    path('dnd/', include('spells.urls')),               #URL for spells
 ]
 
 if settings.DEBUG:

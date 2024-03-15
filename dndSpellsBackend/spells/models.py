@@ -7,6 +7,8 @@ from mongoengine import *
 from .utils import SpellSchool, CastType, SpellRangeType, ComponentType, ClassType, save_image
 
 class Spells(Document):
+    """Model for spells"""
+    
     # _id = ObjectIdField()
     name = StringField()
     description = StringField()
@@ -44,6 +46,8 @@ class Spells(Document):
         db_table = "spells"
 
 class SpellClasses(Document):
+    """Model for dnd classes"""
+    
     _id = ObjectIdField()
     name = StringField(unique = True)
     image_url = URLField()

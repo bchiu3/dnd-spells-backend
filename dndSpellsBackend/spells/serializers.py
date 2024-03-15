@@ -40,6 +40,7 @@ class ObjectIdField(serializers.Field):
 
 # can't use __all__ because of django_mongoengine_filter
 class SpellSerializer(MongoSerializer):
+    """Serializer for spells"""
     name = serializers.CharField()
     description = serializers.CharField()
     level = serializers.IntegerField()
@@ -95,6 +96,7 @@ class SpellSerializer(MongoSerializer):
         model = Spells
 
 class SpellClassSerializer(MongoSerializer):
+    """Serializer for dnd classes"""
     _id = ObjectIdField(read_only=True)
     name = serializers.CharField(read_only=True)
     image_url = serializers.URLField()
