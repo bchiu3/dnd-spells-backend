@@ -180,8 +180,7 @@ else:
     if frontend_urls:
         CORS_ALLOWED_ORIGINS = frontend_urls.split(",")
 
-
-mongoengine.connect(db= MONGO_DB_NAME, 
-                    host= MONGO_HOST_URL, 
-                    username= MONGO_USERNAME,
-                    password= MONGO_PASSWORD)
+mongoengine.connect(db=MONGO_DB_NAME, 
+                    host=MONGO_HOST_URL, 
+                    username=MONGO_USERNAME,
+                    password=MONGO_PASSWORD)
