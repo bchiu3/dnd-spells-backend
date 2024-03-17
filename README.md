@@ -4,8 +4,6 @@
 # Deployment
 Deploy using github by forking with [these instructions](`https://vercel.com/docs/deployments/git/vercel-for-github`)
 
-Change the root directory in `Settings > General > RootDirectory` to `dndSpellsBackend`
-
 # Env variables needed
 * Necessary
   * Used to connect to store spell list, make it by registering [here](https://www.mongodb.com/cloud/atlas/register) and following these instructions [here](https://www.mongodb.com/docs/atlas/tutorial/create-new-cluster/#navigate-to-the-database-deployments-page-for-your-project-2)
