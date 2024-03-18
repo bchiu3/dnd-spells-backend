@@ -102,7 +102,7 @@ DATABASES = {
         'PORT': os.environ.get("POSTGRES_PORT"),
     }
 }
-\
+
 if DATABASE_NAME:
     DATABASES['default']['NAME'] = DATABASE_NAME
 

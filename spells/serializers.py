@@ -5,7 +5,7 @@ from bson.errors import InvalidId
 from rest_framework import serializers
 
 from dndSpellsBackend.storage_backends import PublicMediaStorage
-from .utils import validate_comma_separated_list, CastType, ClassType, ComponentType, SpellRangeType, SpellSchool
+from .utils import hasS3, validate_comma_separated_list, CastType, ClassType, ComponentType, SpellRangeType, SpellSchool
 from .models import Spells, SpellClasses
 from django.conf import settings
 
@@ -68,12 +68,16 @@ class SpellSerializer(MongoSerializer):
                 self.fields['image_url'] = serializers.FileField(required=False)
                 self.fields['components'] = serializers.CharField(default="")
                 self.fields['classes'] = serializers.CharField(default="")
+                if not hasS3():
+                    self.fields['image_url'] = serializers.CharField(required=False)
         except KeyError:
             pass
     
     def get_image_url(self, obj):
         if obj.image_url:
-            return PublicMediaStorage().url(obj.image_url)
+            if hasS3():
+                return PublicMediaStorage().url(obj.image_url)
+            return obj.image_url
         return None
     
     def validate(self, data):
@@ -107,6 +111,8 @@ class SpellClassSerializer(MongoSerializer):
         try:
             if self.context['request'].method in ['POST', 'PUT', 'PATCH']:
                 self.fields['image_url'] = serializers.FileField(required=False)
+                if not hasS3():
+                    self.fields['image_url'] = serializers.CharField(required=False)
         except KeyError:
             pass
     

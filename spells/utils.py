@@ -108,3 +108,12 @@ def get_random_hash() -> str:
         str: A randomly generated hexadecimal hash string.
     """
     return uuid.uuid4().hex
+
+def hasS3() -> bool:
+    """
+    Check if the S3 settings are set.
+
+    Returns:
+        bool: True if S3 settings are set, False otherwise.
+    """
+    return settings.AWS_S3_ACCESS_KEY_ID is not None and settings.AWS_S3_SECRET_ACCESS_KEY is not None
