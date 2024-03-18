@@ -15,7 +15,7 @@ from pathlib import Path
 import mongoengine
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 PATH_TO_MONGO_PEM = os.getenv('PATH_TO_MONGO_PEM')
 MONGO_HOST_URL = os.getenv('MONGO_HOST_URL')
@@ -92,17 +92,19 @@ WSGI_APPLICATION = 'dndSpellsBackend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+DATABASE_NAME = os.environ.get("POSTGRES_DATABASE")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        'NAME': os.environ.get("POSTGRES_DATABASE"),
         'USER': os.environ.get("POSTGRES_USER"),
         'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
         'HOST': os.environ.get("POSTGRES_HOST"),
         'PORT': os.environ.get("POSTGRES_PORT"),
     }
 }
+\
+if DATABASE_NAME:
+    DATABASES['default']['NAME'] = DATABASE_NAME
 
 
 # Password validation

@@ -1,6 +1,8 @@
 from re import search
 from django.shortcuts import render
 from rest_framework import generics
+
+from .permissions import IsAuthenticatedOrNoLoginOrReadOnly
 from .serializers import SpellClassSerializer, SpellSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view
@@ -63,7 +65,7 @@ class SpellFilter(filters.FilterSet):
 
 class SpellsView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrNoLoginOrReadOnly]
     queryset = Spells.objects.all() # type: ignore
     serializer_class = SpellSerializer
     pagination_class = StandardResultsSetPagination
@@ -73,7 +75,7 @@ class SpellsView(generics.ListCreateAPIView):
 
 class SpellsInstanceView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrNoLoginOrReadOnly]
     queryset = Spells.objects.all() # type: ignore
     serializer_class = SpellSerializer
     parser_classes = (MultiPartParser, FileUploadParser)
@@ -81,14 +83,14 @@ class SpellsInstanceView(generics.RetrieveUpdateDestroyAPIView):
     
 class SpellClassesView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrNoLoginOrReadOnly]
     queryset = SpellClasses.objects.all() # type: ignore
     serializer_class = SpellClassSerializer
     parser_classes = (MultiPartParser, FileUploadParser)
 
 class SpellClassesInstanceView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrNoLoginOrReadOnly]
     queryset = SpellClasses.objects.all() # type: ignore
     serializer_class = SpellClassSerializer
     parser_classes = (MultiPartParser, FileUploadParser)
