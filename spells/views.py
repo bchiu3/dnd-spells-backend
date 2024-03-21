@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import generics
 
 from .permissions import IsAuthenticatedOrNoLoginOrReadOnly
-from .serializers import SpellClassSerializer, SpellSerializer
+from .serializers import FeatsSerializer, SpellClassSerializer, SpellSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view
 from django_filters.rest_framework import DjangoFilterBackend
@@ -80,7 +80,25 @@ class SpellsInstanceView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SpellSerializer
     parser_classes = (MultiPartParser, FileUploadParser)
     lookup_field = 'name'
-    
+
+class FeatsView(generics.ListCreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedOrNoLoginOrReadOnly]
+    queryset = Feats.objects.all() # type: ignore
+    serializer_class = FeatsSerializer
+    pagination_class = StandardResultsSetPagination
+    def filter_queryset(self, queryset):
+        filter_qs = SpellFilter(self.request.query_params, queryset=queryset) # type: ignore
+        return filter_qs.qs.order_by('-is_recommended', 'name')
+
+class FeatsInstanceView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedOrNoLoginOrReadOnly]
+    queryset = Feats.objects.all() # type: ignore
+    serializer_class = FeatsSerializer
+    parser_classes = (MultiPartParser, FileUploadParser)
+    lookup_field = 'name'
+
 class SpellClassesView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrNoLoginOrReadOnly]
