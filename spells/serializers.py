@@ -9,6 +9,11 @@ from .utils import hasS3, validate_comma_separated_list, CastType, ClassType, Co
 from .models import Spells, SpellClasses, Feats
 from django.conf import settings
 
+class TruncatedCharField(serializers.CharField):
+    def to_representation(self, data):
+        if self.max_length and data and len(data) > self.max_length:
+            return data[: self.max_length]
+        return data
 
 class MongoSerializer(serializers.Serializer):
 
@@ -45,8 +50,9 @@ class ObjectIdField(serializers.Field):
 
 class SpellSerializer(MongoSerializer):
     """Serializer for spells"""
+    _id = ObjectIdField(read_only=True)
     name = serializers.CharField()
-    description = serializers.CharField()
+    description = TruncatedCharField(max_length=400)
     level = serializers.IntegerField()
     school = serializers.ChoiceField(
         choices=[(member.value, member.name) for member in SpellSchool])
@@ -111,6 +117,8 @@ class SpellSerializer(MongoSerializer):
     class Meta:
         model = Spells
 
+class SpellInstanceSerializer(SpellSerializer):
+    description = serializers.CharField()
 
 class FeatsSerializer(MongoSerializer):
     """Serializer for feats"""

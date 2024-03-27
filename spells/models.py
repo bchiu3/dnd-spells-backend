@@ -10,7 +10,7 @@ from .utils import SpellSchool, CastType, SpellRangeType, ComponentType, ClassTy
 class Spells(Document):
     """Model for spells"""
     
-    # _id = ObjectIdField()
+    _id = ObjectIdField()
     name = StringField()
     description = StringField()
     level = IntField()
@@ -36,7 +36,7 @@ class Spells(Document):
             'classes',
             'level',
         ],
-        # 'id_field': '_id'
+        'id_field': '_id'
     }
     
     def save(self, *args, **kwargs):
