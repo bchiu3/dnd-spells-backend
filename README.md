@@ -2,7 +2,7 @@
  Backend for the dnd-spells I'm making
 
 # Deployment
-Deploy using github by forking with [these instructions](`https://vercel.com/docs/deployments/git/vercel-for-github`)
+Deploy using github by forking with [these instructions](https://vercel.com/docs/deployments/git/vercel-for-github)
 
 # Env variables needed
 * Necessary
