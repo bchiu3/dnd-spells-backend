@@ -26,7 +26,7 @@ Deploy using github by forking with [these instructions](https://vercel.com/docs
     * POSTGRES_PASSWORD
     * POSTGRES_DATABASE
     * POSTGRES_PORT
-  * Used to store images for spells, follow the ways to do it [here](`https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/`)
+  * Used to store images for spells, follow the ways to do it [here](https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/)
     * AWS_S3_ACCESS_KEY_ID
     * AWS_S3_SECRET_ACCESS_KEY
     * AWS_STORAGE_BUCKET_NAME
